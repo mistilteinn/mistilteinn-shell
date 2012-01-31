@@ -17,4 +17,5 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'json', ['>= 0'] unless defined? JSON
   gem.add_development_dependency 'rspec', ['>= 0']
+  gem.add_development_dependency 'rake', ['>= 0']
 end
