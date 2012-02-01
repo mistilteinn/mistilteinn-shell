@@ -1,6 +1,45 @@
 #! /opt/local/bin/ruby -w
 # -*- mode:ruby; coding:utf-8 -*-
 
-require '../../spec_helper'
+require 'spec_helper'
+require 'uri'
+require 'mistilteinn/http_util'
 
-spec 'redmi'
+spec 'ticket/redmine' do
+  before do
+    @config = Mistilteinn::Config.new({ 'ticket' => {
+                                          'url' => 'http://example.com/redmine',
+                                          'project' => 'some-project',
+                                          'apikey' => 'key' }})
+    @redmine = Mistilteinn::Ticket::Redmine.new @config
+  end
+
+  describe 'ticket list' do
+    before do
+      Mistilteinn::HttpUtil.should_receive(:get_json).
+        with(URI('http://example.com/redmine/issues.json'),
+             { :project_id => 'some-project', :key => 'key' }) do
+        { "issues" =>
+          [
+           { "subject" => "Ticket A", "status" => { "name" => "open" }},
+           { "subject" => "Ticket B", "status" => { "name" => "close" }}
+          ]}
+      end
+    end
+
+    subject { @redmine.tickets }
+    its(:length) { should == 2 }
+
+    describe 'Ticket A' do
+      subject { @redmine.tickets[0] }
+      its(:name) { should == "Ticket A" }
+      its(:status) { should == "open" }
+    end
+
+    describe 'Ticket B' do
+      subject { @redmine.tickets[1] }
+      its(:name) { should == "Ticket B" }
+      its(:status) { should == "close" }
+    end
+  end
+end

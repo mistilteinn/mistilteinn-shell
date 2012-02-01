@@ -1,0 +1,4 @@
+ticket:
+  url: https://codefirst.org/redmine/
+  project: mistilteinn-shell
+  apikey: your_api_key

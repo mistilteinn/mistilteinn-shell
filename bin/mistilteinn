@@ -1,0 +1,7 @@
+require 'pp'
+require 'mistilteinn/config'
+require 'mistilteinn/ticket/redmine'
+
+redmine = Mistilteinn::Ticket::Redmine.new Mistilteinn::Config.load('config.yaml')
+
+pp redmine.tickets

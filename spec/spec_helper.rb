@@ -2,5 +2,6 @@
 
 def spec(name, &f)
   require "mistilteinn/#{name}"
-  describe "Mistilteinn::#{name.capitalize}", &f
+  xs = name.split('/').map{|x| x.capitalize }.join('::')
+  describe "Mistilteinn::#{xs}", &f
 end
