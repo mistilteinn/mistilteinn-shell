@@ -3,34 +3,43 @@
 
 require 'yaml'
 require 'ostruct'
+require 'mistilteinn/git'
 
 module Mistilteinn
+  class ConfigError < StandardError
+  end
+
   class Config
     def self.load(path)
       self.new(YAML.load_file(path))
     end
 
     def initialize(hash)
-      @keys = hash.keys
-      @obj = make hash
+      @hash = hash
     end
 
     def method_missing(name, *args)
-      if @keys.include?(name.to_s) and args.empty? then
-        @obj.send name
+      if args.empty? then
+        key = name.to_s
+        WrapObj.new(key, @hash[key] || {} )
       else
         super(name, *args)
       end
     end
 
-    private
-    def make(hash)
-      hash.each do|key, value|
-        if value.class == Hash
-          hash[key] = make(value)
-        end
+    class WrapObj
+      def initialize(name, hash)
+        @name = name
+        @hash = hash
       end
-      OpenStruct.new hash
+
+      def method_missing(name, *args)
+        key = name.to_s
+        super(name, *args) unless args.empty?
+        @hash[key] or
+          ::Mistilteinn::Git.config("#{@name}.#{key}") or
+          raise ConfigError.new("no config(#{@name}.#{key})")
+      end
     end
   end
 end

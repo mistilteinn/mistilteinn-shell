@@ -7,7 +7,7 @@ require 'mistilteinn/http_util'
 
 spec 'ticket/redmine' do
   before do
-    @config = Mistilteinn::Config.new({ 'ticket' => {
+    @config = Mistilteinn::Config.new({ 'redmine' => {
                                           'url' => 'http://example.com/redmine',
                                           'project' => 'some-project',
                                           'apikey' => 'key' }})

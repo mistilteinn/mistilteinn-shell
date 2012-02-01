@@ -8,7 +8,7 @@ module Mistilteinn
   module Ticket
     class Redmine
       def initialize(config)
-        @config = config.ticket
+        @config = config.redmine
       end
 
       def tickets
