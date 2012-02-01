@@ -4,6 +4,21 @@
 require 'spec_helper'
 
 spec 'config' do
-  subject { Mistilteinn::Config.new }
-  its(:source) { should == :local }
+  describe 'load from file' do
+    before do
+      YAML.should_receive(:load_file) {
+        {'ticket' => {
+            'source' => 'local',
+            'path'   => '/path/to/ticket.txt'
+          }}}
+
+      @config = Mistilteinn::Config.load('config.yml')
+    end
+
+    context 'ticket' do
+      subject { @config.ticket }
+      its(:source) { should == 'local' }
+      its(:path)   { should == '/path/to/ticket.txt' }
+    end
+  end
 end
