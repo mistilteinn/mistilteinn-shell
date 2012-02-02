@@ -57,4 +57,30 @@ spec 'ticket/redmine' do
       @redmine.create 'hogehoge'
     end
   end
+
+  describe 'self-check' do
+    context 'success' do
+      before do
+        Mistilteinn::HttpUtil.should_receive(:get_json).
+          with(URI('http://example.com/redmine/users/current.json'),
+               { :key => 'key' }) do {} end
+      end
+
+      subject { @redmine }
+      its(:check) { should == 'ok' }
+    end
+
+    context 'fail' do
+      before do
+        Mistilteinn::HttpUtil.should_receive(:get_json).
+          with(URI('http://example.com/redmine/users/current.json'),
+               { :key => 'key' }) do
+          raise Mistilteinn::HttpUtil::HttpError.new('foo bar')
+        end
+      end
+
+      subject { @redmine }
+      its(:check) { should == 'Error: foo bar' }
+    end
+  end
 end

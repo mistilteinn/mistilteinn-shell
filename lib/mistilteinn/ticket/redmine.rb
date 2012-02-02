@@ -30,6 +30,16 @@ module Mistilteinn
                              }})
       end
 
+      def check
+        begin
+          HttpUtil.get_json(api('users/current'),
+                            { :key => @config.apikey})
+          'ok'
+        rescue HttpUtil::HttpError => e
+          "Error: #{e.message}"
+        end
+      end
+
       private
       def api(name)
         URI(@config.url + '/') + "#{name}.json"
