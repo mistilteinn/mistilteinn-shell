@@ -5,10 +5,69 @@ require 'mistilteinn/config'
 require 'mistilteinn/git'
 require 'mistilteinn/ticket'
 
-include Subcommands
-options  = {}
-action   = {}
+class Command
+  attr_reader :its, :config, :args
 
+  def initialize(obj)
+    obj.command name do|opts|
+      opts.description = 'show current ticket list'
+    end
+  end
+
+  def its
+    klass = Mistilteinn::Ticket[config.ticket.source]
+    @its   = klass.new config
+  end
+
+  def run(config, args)
+    @config = config
+    @args   = args
+    action
+  end
+
+  @@klass = []
+  class << self
+    def inherited(k)
+      @@klass << k
+    end
+
+    def commands
+      @@klass
+    end
+
+    def name(x)
+      define_method(:name){ x }
+    end
+
+    def desc(x)
+      define_method(:desc){ x }
+    end
+  end
+end
+
+class ListCommand < Command
+  name :list
+  desc 'show current ticket list'
+
+  def action
+    its.tickets.each do|entry|
+      puts entry.format
+    end
+  end
+end
+
+class CreateCommand < Command
+  name :create
+  desc 'create ticket'
+
+  def action
+    its.create args.join(' ')
+  end
+end
+
+include Subcommands
+
+options  = {}
 global_options do|opts|
   options[:config] = File.expand_path '.mistilteinn/config.yaml', Mistilteinn::Git.root
   opts.on('-c CONFIG', '--config=CONIF') do|config|
@@ -16,26 +75,13 @@ global_options do|opts|
   end
 end
 
-command :list do|opts|
-  opts.description = 'show current ticket list'
-  action[:list] = lambda do|config, options,_|
-    klass = Mistilteinn::Ticket[config.ticket.source]
-    its   = klass.new config
-    its.tickets.each do|entry|
-      puts entry.format
-    end
-  end
+commands = Command.commands.map do|k|
+  k.new self
 end
 
-command :create do|opts|
-  opts.description = 'create ticket'
-  action[:create] = lambda do|config, options,args|
-0    klass = Mistilteinn::Ticket[config.ticket.source]
-    its   = klass.new config
-    its.create args.join(' ')
-  end
-end
+name = opt_parse
 
-cmd = opt_parse
 config = Mistilteinn::Config.load options[:config]
-action[cmd.to_sym][config, options, ARGV]
+
+obj = commands.find{|c| c.name == name.to_sym }
+obj.run config, ARGV
