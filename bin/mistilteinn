@@ -1,7 +1,32 @@
+# -*- mode:ruby; coding:utf-8 -*-
 require 'pp'
+require 'subcommand'
 require 'mistilteinn/config'
-require 'mistilteinn/ticket/redmine'
+require 'mistilteinn/git'
+require 'mistilteinn/ticket'
 
-redmine = Mistilteinn::Ticket::Redmine.new Mistilteinn::Config.load('config.yaml')
+include Subcommands
+options  = {}
+action   = {}
 
-pp redmine.tickets
+global_options do|opts|
+  options[:config] = File.expand_path '.mistilteinn/config.yaml', Mistilteinn::Git.root
+  opts.on('-c CONFIG', '--config=CONIF') do|config|
+    options[:config] = config
+  end
+end
+
+command :list do|opts|
+  opts.description = 'show current ticket list'
+  action[:list] = lambda do|config, options|
+    klass = Mistilteinn::Ticket[config.ticket.source]
+    its   = klass.new config
+    its.tickets.each do|entry|
+      puts entry.format
+    end
+  end
+end
+
+cmd = opt_parse
+config = Mistilteinn::Config.load options[:config]
+action[cmd.to_sym][config, options]

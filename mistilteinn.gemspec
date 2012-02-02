@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- mode:ruby; coding:utf-8 -*-
 require File.expand_path('../lib/mistilteinn/version', __FILE__)
 
 Gem::Specification.new do |gem|
@@ -16,6 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = Mistilteinn::VERSION
 
   gem.add_dependency 'json', ['>= 0'] unless defined? JSON
+  gem.add_dependency 'subcommand', ['>= 0']
   gem.add_development_dependency 'rspec', ['>= 0']
   gem.add_development_dependency 'rake', ['>= 0']
 end

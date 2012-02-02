@@ -3,14 +3,20 @@
 
 module Mistilteinn
   module Git
-    def config(name)
-      str = %x(git config #{name} 2>/dev/null || echo "").strip
-      if str.empty? then
-        nil
-      else
-        str
+    class << self
+      def config(name)
+        cmd "git config #{name}"
+      end
+
+      def root
+        cmd "git rev-parse --show-toplevel"
+      end
+
+      private
+      def cmd(str)
+        str = %x(#{str} 2>/dev/null || echo "").strip
+        str.empty? ? nil : str
       end
     end
-    module_function :config
   end
 end

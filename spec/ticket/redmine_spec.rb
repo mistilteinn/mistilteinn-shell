@@ -21,8 +21,8 @@ spec 'ticket/redmine' do
              { :project_id => 'some-project', :key => 'key' }) do
         { "issues" =>
           [
-           { "subject" => "Ticket A", "status" => { "name" => "open" }},
-           { "subject" => "Ticket B", "status" => { "name" => "close" }}
+           { "id" => "1", "subject" => "Ticket A", "status" => { "name" => "open" }},
+           { "id" => "2", "subject" => "Ticket B", "status" => { "name" => "close" }}
           ]}
       end
     end
@@ -32,12 +32,14 @@ spec 'ticket/redmine' do
 
     describe 'Ticket A' do
       subject { @redmine.tickets[0] }
+      its(:id)   { should == "1" }
       its(:name) { should == "Ticket A" }
       its(:status) { should == "open" }
     end
 
     describe 'Ticket B' do
       subject { @redmine.tickets[1] }
+      its(:id)   { should == "2" }
       its(:name) { should == "Ticket B" }
       its(:status) { should == "close" }
     end

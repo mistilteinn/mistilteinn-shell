@@ -15,7 +15,8 @@ module Mistilteinn
         HttpUtil.get_json(URI(@config.url + '/') + 'issues.json',
                           { :project_id => @config.project,
                             :key => @config.apikey})['issues'].map{|entry|
-          ::Mistilteinn::Ticket::Entry.new(entry['subject'],
+          ::Mistilteinn::Ticket::Entry.new(entry['id'],
+                                           entry['subject'],
                                            entry['status']['name'])
         }
       end
