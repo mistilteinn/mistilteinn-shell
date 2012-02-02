@@ -44,4 +44,17 @@ spec 'ticket/redmine' do
       its(:status) { should == "close" }
     end
   end
+
+  describe 'create ticket' do
+    it do
+      Mistilteinn::HttpUtil.should_receive(:post_json).
+        with(URI('http://example.com/redmine/issues.json'),
+             { 'X-Redmine-API-Key' => 'key' },
+             { :issue => {
+                 :project_id => 'some-project',
+                 :subject => 'hogehoge'
+               }})
+      @redmine.create 'hogehoge'
+    end
+  end
 end

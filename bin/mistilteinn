@@ -18,7 +18,7 @@ end
 
 command :list do|opts|
   opts.description = 'show current ticket list'
-  action[:list] = lambda do|config, options|
+  action[:list] = lambda do|config, options,_|
     klass = Mistilteinn::Ticket[config.ticket.source]
     its   = klass.new config
     its.tickets.each do|entry|
@@ -27,6 +27,15 @@ command :list do|opts|
   end
 end
 
+command :create do|opts|
+  opts.description = 'create ticket'
+  action[:create] = lambda do|config, options,args|
+0    klass = Mistilteinn::Ticket[config.ticket.source]
+    its   = klass.new config
+    its.create args.join(' ')
+  end
+end
+
 cmd = opt_parse
 config = Mistilteinn::Config.load options[:config]
-action[cmd.to_sym][config, options]
+action[cmd.to_sym][config, options, ARGV]
