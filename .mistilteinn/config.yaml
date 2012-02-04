@@ -4,3 +4,6 @@ ticket:
 redmine:
   url: https://codefirst.org/redmine/
   project: mistilteinn-shell
+
+github:
+  url: https://github.com/mistilteinn/mistilteinn-shell

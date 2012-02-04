@@ -6,3 +6,6 @@ redmine:
   project: some-project-name
   apikey: your_key
   # or 'git config redmine.apikey your_key'
+
+github:
+  url: https://github.com/mistilteinn/mistilteinn-shell
