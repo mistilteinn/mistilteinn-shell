@@ -33,7 +33,7 @@ module Mistilteinn
         end
 
         def name(x)
-          define_method(:name){ x }
+          define_method(:name){ x.to_sym }
         end
 
         def desc(x)

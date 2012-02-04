@@ -11,11 +11,20 @@ module Mistilteinn
 
   class Config
     def self.load(path)
-      self.new(YAML.load_file(path))
+      if File.exist? path then
+        self.new(YAML.load_file(path), path)
+      else
+        self.new({} , path)
+      end
     end
 
-    def initialize(hash)
+    def initialize(hash, path = nil)
       @hash = hash
+      @path = path
+    end
+
+    def exist?
+      File.exist?(@path) if @path
     end
 
     def method_missing(name, *args)

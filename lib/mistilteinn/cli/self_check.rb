@@ -1,6 +1,6 @@
 module Mistilteinn::Cli
   class SelfCheck < ::Mistilteinn::Cli::Command
-    name 'self-check'.to_sym
+    name 'self-check'
     desc 'check whether mistilteinn works'
 
     def action

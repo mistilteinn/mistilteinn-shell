@@ -24,7 +24,12 @@ commands = Mistilteinn::Cli::Command.commands.map(&curry(:new, self))
 
 name = opt_parse
 
-config = Mistilteinn::Config.load options[:config]
+begin
+  config = Mistilteinn::Config.load options[:config]
+rescue => e
+  puts "#{options[:config]}: #{e.message}"
+  exit 1
+end
 
 obj = commands.find{|c| c.name == (name || '-').to_sym }
 if obj then
