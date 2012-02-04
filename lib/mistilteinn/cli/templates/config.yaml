@@ -1,4 +1,5 @@
 ticket:
+  # redmine, github or gitconfig
   source: redmine
 
 redmine:
