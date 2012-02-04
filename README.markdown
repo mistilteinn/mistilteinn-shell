@@ -15,7 +15,7 @@ Prerequires
  * git-hooks http://github.com/mistilteinn/git-hooks
  * git subcommands https://github.com/mistilteinn/git-tools
 
-For developer
+Install
 ------------------------------
 
 ### Prerequires
@@ -39,6 +39,30 @@ For developer
     $ bundle exec rake build
     $ cd pkg
     $ gem install mistilteinn-*.gem
+
+Usage
+------------------------------
+
+### self cehck
+
+Check if miltilteinn works:
+
+   $ mistilteinn self-check
+
+### init
+
+Initialize working directory for mistilteinn:
+
+   $ mistilteinn init
+   $ vim .mistilteinn/config.yaml
+
+### list ticket
+
+   $ mistilteinn list
+
+### create ticket
+
+   $ mistilteinn create hoge
 
 AUTHOR
 ------------------------------
