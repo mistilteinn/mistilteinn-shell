@@ -1,0 +1,8 @@
+ticket:
+  source: redmine
+
+redmine:
+  url: https://example.com/redmine/
+  project: some-project-name
+  apikey: your_key
+  # or 'git config redmine.apikey your_key'
