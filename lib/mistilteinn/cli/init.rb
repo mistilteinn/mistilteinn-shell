@@ -20,7 +20,7 @@ module Mistilteinn::Cli
         if dest.exist? then
           puts "skip"
         else
-          FileUtils.copy dest, config
+          FileUtils.copy src, config
           puts "ok"
         end
       end
