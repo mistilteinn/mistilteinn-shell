@@ -6,6 +6,7 @@ require 'spec_helper'
 spec 'config' do
   describe 'load from file' do
     before do
+      File.should_receive(:exist?) { true }
       YAML.should_receive(:load_file) {
         {'ticket' => {
             'source' => 'local',
@@ -22,6 +23,7 @@ spec 'config' do
 
   describe 'get config from git-config instead of ymal' do
     before do
+      File.should_receive(:exist?) { true }
       YAML.should_receive(:load_file) {
         {'ticket' => {
             'source' => 'local',
