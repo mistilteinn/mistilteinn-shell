@@ -1,6 +1,6 @@
 Mistilteinn for shell
 ==============================
-[![Build Status](https://secure.travis-ci.org/mistilteinn/mistilteinn.png)](http://travis-ci.org/mistilteinn/mistilteinn)
+[![Build Status](https://secure.travis-ci.org/mistilteinn/mistilteinn-shell.png)](http://travis-ci.org/mistilteinn/mistilteinn-shell)
 
 OVERVIEW
 ------------------------------
