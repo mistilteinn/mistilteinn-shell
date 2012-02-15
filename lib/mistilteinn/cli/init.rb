@@ -1,4 +1,4 @@
-# -*- coding: undecided -*-
+# -*- coding: utf-8 -*-
 require 'pathname'
 require 'fileutils'
 require 'mistilteinn/git'
@@ -6,7 +6,7 @@ require 'mistilteinn/git'
 module Mistilteinn::Cli
   class Init < ::Mistilteinn::Cli::Command
     name :init
-    desc 'initialize this repository for mistilteinn'
+    desc 'initializscce this repository for mistilteinn'
 
     def action
       copy( children('hooks'), git_root('.git/hooks') )
