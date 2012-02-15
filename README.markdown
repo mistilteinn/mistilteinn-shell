@@ -13,33 +13,22 @@ Prerequires
 
  * Ruby 1.8.7
  * RubyGems 1.4.2 or later
- * git-hooks http://github.com/mistilteinn/git-hooks
  * git subcommands https://github.com/mistilteinn/git-tools
 
 Install
 ------------------------------
 
-### Prerequires
+   $ gem install mistilteinn
 
-    $ bundle install --path vendor/bundle
+Setup for each project
+------------------------------
 
-### Run
+To use mistilteinn, run `mistilteinn init` at each project dirctory.
 
-    $ bundle exec mistilteinn
-
-### Run test
-
-    $ bundle exec rake spec
-
-### Package
-
-    $ bundle exec rake build
-
-### Install to system
-
-    $ bundle exec rake build
-    $ cd pkg
-    $ gem install mistilteinn-*.gem
+   $ cd /path/to/project
+   $ git init
+   $ mistilteinn init
+   $ vim .mistilteinn/config.yaml
 
 Usage
 ------------------------------
@@ -64,6 +53,31 @@ Initialize working directory for mistilteinn:
 ### create ticket
 
    $ mistilteinn create hoge
+
+Build(developper only)
+------------------------------
+
+### Prerequires
+
+    $ bundle install --path vendor/bundle
+
+### Run
+
+    $ bundle exec mistilteinn
+
+### Run test
+
+    $ bundle exec rake spec
+
+### Package
+
+    $ bundle exec rake build
+
+### Install to system
+
+    $ bundle exec rake build
+    $ cd pkg
+    $ gem install mistilteinn-*.gem
 
 AUTHOR
 ------------------------------
