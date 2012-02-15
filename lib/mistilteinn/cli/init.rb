@@ -1,3 +1,4 @@
+# -*- coding: undecided -*-
 require 'pathname'
 require 'fileutils'
 require 'mistilteinn/git'
@@ -8,32 +9,38 @@ module Mistilteinn::Cli
     desc 'initialize this repository for mistilteinn'
 
     def action
-      shell "git hooks on"
+      copy( children('hooks'), git_root('.git/hooks') )
+      copy( children('templates'), git_root('.mistilteinn') )
+    end
 
-      config = Pathname(::Mistilteinn::Git.root) + '.mistilteinn'
-      puts "mkdir -p #{config}"
-      config.mkpath
+    private
+    def children(name)
+      path = Pathname(File.dirname(__FILE__)) + name
+      path.children
+    end
 
-      templates.each do|src|
+    def git_root(name)
+      path = Pathname(::Mistilteinn::Git.root) + name
+      path.tap {
+        unless path.exist?
+          puts "mkdir -p #{config}"
+          config.mkpath
+        end
+      }
+    end
+
+    def copy(files, dir)
+      puts "copy to #{dir}"
+      files.each do|src|
         print "generate #{src.basename}..."
-        dest = config + src.basename
+        dest = dir + src.basename
         if dest.exist? then
           puts "skip"
         else
-          FileUtils.copy src, config
+          FileUtils.copy src, dest
           puts "ok"
         end
       end
-    end
-
-    def shell(str)
-      puts str
-      system str
-    end
-
-    def templates
-      path = Pathname(File.dirname(__FILE__)) + 'templates'
-      path.children
     end
   end
 end
