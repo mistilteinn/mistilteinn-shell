@@ -18,17 +18,17 @@ Prerequires
 Install
 ------------------------------
 
-   $ gem install mistilteinn
+    $ gem install mistilteinn
 
 Setup for each project
 ------------------------------
 
 To use mistilteinn, run `mistilteinn init` at each project dirctory.
 
-   $ cd /path/to/project
-   $ git init
-   $ mistilteinn init
-   $ vim .mistilteinn/config.yaml
+    $ cd /path/to/project
+    $ git init
+    $ mistilteinn init
+    $ vim .mistilteinn/config.yaml
 
 Usage
 ------------------------------
@@ -37,24 +37,24 @@ Usage
 
 Check if miltilteinn works:
 
-   $ mistilteinn self-check
+    $ mistilteinn self-check
 
 ### init
 
 Initialize working directory for mistilteinn:
 
-   $ mistilteinn init
-   $ vim .mistilteinn/config.yaml
+    $ mistilteinn init
+    $ vim .mistilteinn/config.yaml
 
 ### list ticket
 
-   $ mistilteinn list
+    $ mistilteinn list
 
 ### create ticket
 
-   $ mistilteinn create hoge
+    $ mistilteinn create hoge
 
-Build(developper only)
+Build(developer only)
 ------------------------------
 
 ### Prerequires
