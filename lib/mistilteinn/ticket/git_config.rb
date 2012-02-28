@@ -1,9 +1,25 @@
 # -*- mode:ruby; coding:utf-8 -*-
 require 'tempfile'
 
+class Tempfile
+  def edit(editor=nil)
+    mtime_before_edit = self.mtime
+    self.close
+    system "#{editor || ENV["EDITOR"]} #{self.path}"
+    self.open
+    return self.mtime != mtime_before_edit
+  end
+  def content=(content)
+    self.rewind
+    self.write content
+  end
+end
+
 module Mistilteinn
   module Ticket
     class Config
+      class ConfigError < StandardError; end
+
       def initialize(config_hash, path)
         @config = config_hash
         @path = path
@@ -12,6 +28,10 @@ module Mistilteinn
 
       def has_key?(key)
         @config.has_key?(key) || @config.has_key?(key.to_s)
+      end
+
+      def empty?
+        @config.empty?
       end
 
       def []=(*args)
@@ -25,25 +45,20 @@ module Mistilteinn
 
       def method_missing(name, *args)
         name = name.to_s
-        is_assignment = create_if_nil = false
-        if name[-1..-1] == '=' then
-          is_assignment = true
-          name.slice! -1
-        end
-        if name[-1..-1] == '_' then
-          create_if_nil = true
-          name.slice! -1
-        end
+        name.slice! -1 if method_is_assignment = name.end_with?("=")
+        name.slice! -1 if create_obj_if_nil = name.end_with?("_")
 
-        return assignment(name, args[0]) if is_assignment
-
-        config_object = get_config_object(@path+[name.to_s])
-        return nil if config_object.config.empty? and not create_if_nil
-
-        if config_object.config.class == Hash then
-          config_object
+        if method_is_assignment then
+          assignment(name, args[0])
         else
-          config_object.config
+          config_object = get_config_object(@path+[name.to_s])
+          return nil if config_object.empty? and not create_obj_if_nil
+
+          case config_object.config
+          when Hash   then config_object
+          when String then config_object.config
+          else raise ConfigError.new
+          end
         end
       end
 
@@ -109,7 +124,7 @@ module Mistilteinn
       end
 
       def create(title = "")
-        ticketFormat = <<END
+        ticket_format = <<END
 Subject: #{title}
 Author: #{@config.user.name}
 Date: #{Time.now}
@@ -118,39 +133,55 @@ Description: |-
 
 END
 
-        editTempFile(ticketFormat) do |f, modified|
-          return if not modified and title.empty?
+        tmpfile = Tempfile.new 'tmp'
+        tmpfile.content = ticket_format({
+          subject => title,
+          author  => ::Mistilteinn::Config.get("user.name"),
+          date    => Time.now,
+          status  => "new"
+        })
 
-          ticket = @config.ticket
-          ticketNo = (ticket.ticketno || "1").to_i
-
+        ticket_no = (::Mistilteinn::Git.config "ticket.ticketno" || "1").to_i
+      
+        File::open(tmpfile.path) do |f|
           YAML.load_documents(f) do |yaml|
             yaml.each do |key, value|
-              ticket["id/#{ticketNo}_"][key] = value
+              ::Mistilteinn::Git.config("ticket.id/#{ticket_no}.#{key}", value)
             end
           end
-          ticket.ticketno = (ticketNo+1).to_s
         end
+        ::Mistilteinn::Git.config("ticket.ticketno", (ticket_no+1).to_s)
+
+        tmpfile.unlink
       end
 
       def edit(id)
-      end
+        ticket_format = <<END
+Subject: #{ticket_data.subject}
+Author: #{ticket_data.author}
+Date: #{ticket_data.date}
+Status: #{ticket_data.status}
+Description: |-
+  #{ticket_data.description}
+END
 
-      private
-      def editTempFile(initialString, &proc)
-        tmp = Tempfile.new("tmp")
-        tmp.write initialString
-        tmp.close
+        tmpfile = Tempfile.new 'tmp'
+        tmpfile.content = ticket_format
+        modified = tmpfile.edit @git.config.core_.editor
 
-        editor = @config.core_.editor || ENV["EDITOR"]
-        system "#{editor} #{tmp.path}"
-        File.open(tmp.path) do |f|
-          modified = f.read != initialString
-          f.rewind
-          proc.call(f, modified)
+        if modified then
+          File::open(tmpfile.path) do |f|
+            YAML.load_documents(f) do |yaml|
+              yaml.each do |key, value|
+                ::Mistilteinn::Git.config("ticket.id/#{id}.#{key}", "\"#{value}\"")
+              end
+            end
+          end
         end
-        tmp.unlink
+
+        tmpfile.unlink
       end
+
     end
   end
 end
