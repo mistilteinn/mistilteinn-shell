@@ -4,8 +4,8 @@
 module Mistilteinn
   module Git
     class << self
-      def config(name)
-        cmd "git config #{name}"
+      def config(name, value=nil)
+        cmd "git config #{name} #{value or ''}"
       end
 
       def root
