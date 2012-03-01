@@ -23,8 +23,8 @@ module Mistilteinn::Cli
       path = Pathname(::Mistilteinn::Git.root) + name
       path.tap {
         unless path.exist?
-          puts "mkdir -p #{config}"
-          config.mkpath
+          puts "mkdir -p #{path.to_s}"
+          path.mkpath
         end
       }
     end
