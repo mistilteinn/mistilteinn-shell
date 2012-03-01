@@ -7,7 +7,7 @@ module Mistilteinn
 
       def initialize(obj)
         obj.command name do|opts|
-          opts.description = 'show current ticket list'
+          opts.description = desc
         end
       end
 
