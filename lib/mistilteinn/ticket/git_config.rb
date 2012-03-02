@@ -22,8 +22,8 @@ module Mistilteinn
       end
 
       def tickets
-        last_ticket_no = ::Mistilteinn::Git.config "ticket.ticketno"
-        (1...last_ticket_no.to_i).map do |id|
+        last_ticket_id = ::Mistilteinn::Git.config "ticket.last"
+        (1...last_ticket_id.to_i).map do |id|
           subject = ::Mistilteinn::Git.config "ticket.id/#{id}.subject"
           status  = ::Mistilteinn::Git.config "ticket.id/#{id}.status"
           ::Mistilteinn::Ticket::Entry.new(id, subject, status)
@@ -40,39 +40,25 @@ module Mistilteinn
         })
         tmpfile.edit default_editor
 
-        ticket_no = (::Mistilteinn::Git.config("ticket.ticketno") || "1").to_i
-        File::open(tmpfile.path) do |f|
-          YAML.load_documents(f) do |yaml|
-            yaml.each do |key, value|
-              ::Mistilteinn::Git.config("ticket.id/#{ticket_no}.#{key}", "\"#{value}\"")
-            end
-          end
-        end
-        ::Mistilteinn::Git.config("ticket.ticketno", (ticket_no+1).to_s)
+        ticket_id = (::Mistilteinn::Git.config("ticket.last") || "1").to_i
+        issue_ticket(tmpfile, ticket_id)
+        ::Mistilteinn::Git.config("ticket.last", (ticket_id+1).to_s)
 
         tmpfile.unlink
       end
 
-      def edit(id)
+      def edit(ticket_id)
         tmpfile = Tempfile.new 'tmp'
         tmpfile.content = ticket_format({
-          :subject     => ::Mistilteinn::Git.config("ticket.id/#{id}.subject"),
-          :author      => ::Mistilteinn::Git.config("ticket.id/#{id}.author"),
-          :date        => ::Mistilteinn::Git.config("ticket.id/#{id}.date"),
-          :status      => ::Mistilteinn::Git.config("ticket.id/#{id}.status"),
-          :description => ::Mistilteinn::Git.config("ticket.id/#{id}.description")
+          :subject     => ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.subject"),
+          :author      => ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.author"),
+          :date        => ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.date"),
+          :status      => ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.status"),
+          :description => ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.description")
         })
         modified = tmpfile.edit default_editor
 
-        if modified then
-          File::open(tmpfile.path) do |f|
-            YAML.load_documents(f) do |yaml|
-              yaml.each do |key, value|
-                ::Mistilteinn::Git.config("ticket.id/#{id}.#{key}", "\"#{value}\"")
-              end
-            end
-          end
-        end
+        issue_ticket(tmpfile, ticket_id) if modified
 
         tmpfile.unlink
       end
@@ -91,6 +77,16 @@ Status: #{data[:status]}
 Description: |-
   #{data[:description]}
 END
+      end
+
+      def issue_ticket(datafile, ticket_id)
+        File::open(datafile.path) do |f|
+          YAML.load_documents(f) do |yaml|
+            yaml.each do |key, value|
+              ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.#{key}", "\"#{value}\"")
+            end
+          end
+        end
       end
 
     end
