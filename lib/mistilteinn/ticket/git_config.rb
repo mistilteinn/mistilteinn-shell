@@ -21,6 +21,10 @@ module Mistilteinn
       def initialize(config)
       end
 
+      def check
+        'ok'
+      end
+
       def tickets
         last_ticket_id = ::Mistilteinn::Git.config "ticket.last"
         (1...last_ticket_id.to_i).map do |id|
