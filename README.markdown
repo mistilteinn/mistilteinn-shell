@@ -8,12 +8,13 @@ OVERVIEW
 Mistilteinn for shell is a comamnd to support a development style for
 using git and redmine.
 
-Prerequires
+Prerequisites
 ------------------------------
 
  * Ruby 1.8.7
  * RubyGems 1.4.2 or later
  * git subcommands https://github.com/mistilteinn/git-tools
+ * Git Hooks https://github.com/bleis-tift/Git-Hooks
 
 Install
 ------------------------------
