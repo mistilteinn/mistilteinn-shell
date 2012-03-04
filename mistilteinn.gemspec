@@ -9,7 +9,10 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://github.com/mistilteinn/mistilteinn-shell"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  gem.files         = `git ls-files`.split("\n")
+  exclude_from_gem  = File::read('.excluded_from_gem').split("\n")
+  gem.files         = `git ls-files`.split("\n").reject do |file|
+    exclude_from_gem.include? file
+  end
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.name          = "mistilteinn"
   gem.require_paths = ["lib"]
