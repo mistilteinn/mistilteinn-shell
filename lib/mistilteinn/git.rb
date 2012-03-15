@@ -20,6 +20,17 @@ module Mistilteinn
         cmd("which git-#{cmd}") != nil
       end
 
+      def branch
+        $1 if cmd("git branch -l").match(/\* (.+)(\n|$)/)
+      end
+
+      def checkout(id)
+        branch = "id/#{id}"
+        unless cmd "git checkout #{branch}" then
+          cmd "git checkout -b #{branch}"
+        end
+      end
+
       private
       def cmd(str)
         str = %x(#{str} 2>/dev/null || echo "").strip
