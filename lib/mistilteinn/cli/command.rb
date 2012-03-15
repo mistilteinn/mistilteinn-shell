@@ -5,9 +5,10 @@ module Mistilteinn
     class Command
       attr_reader :its, :config, :args
 
-      def initialize(obj)
+      def initialize(obj, &option_setup)
         obj.command name do|opts|
           opts.description = desc
+          option_setup.call opts if option_setup
         end
       end
 
