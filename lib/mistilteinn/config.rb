@@ -42,6 +42,10 @@ module Mistilteinn
         @hash = hash
       end
 
+      def get(name)
+        @hash[name.to_s]
+      end
+
       def method_missing(name, *args)
         key = name.to_s
         super(name, *args) unless args.empty?

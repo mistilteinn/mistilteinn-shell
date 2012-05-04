@@ -33,7 +33,7 @@ module Mistilteinn
 
       private
       def kz(cmd)
-        unless @config.home then
+        unless @config.get :home then
           %x(kz #{cmd})
         else
           %x(kz --katze-dir #{@config.home} #{cmd})
