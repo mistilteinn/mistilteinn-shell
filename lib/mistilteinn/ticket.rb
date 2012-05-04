@@ -1,6 +1,6 @@
-require 'mistilteinn/ticket/redmine'
-require 'mistilteinn/ticket/github'
-require 'mistilteinn/ticket/git_config'
+Dir[File.dirname(__FILE__) + '/ticket/*.rb'].each do|name|
+  require "mistilteinn/ticket/#{File.basename name, '.rb'}"
+end
 
 module Mistilteinn
   module Ticket
@@ -10,6 +10,8 @@ module Mistilteinn
         Mistilteinn::Ticket::Redmine
       when :github
         Mistilteinn::Ticket::Github
+      when :atsuta_katze
+        Mistilteinn::Ticket::AtsutaKatze
       when :gitconfig
         Mistilteinn::Ticket::GitConfig
       end
