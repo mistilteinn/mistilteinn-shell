@@ -10,8 +10,9 @@ module Mistilteinn
       API_URL_ROOT = "https://api.github.com/"
 
       def initialize(config)
-        @url = config.github.url
-        unless @url
+        @group = config.github.group
+        @project = config.github.project
+        unless @group and @project
           raise ConfigError.new
         end
       end
@@ -30,7 +31,7 @@ module Mistilteinn
 
       private
       def api(name)
-        URI(API_URL_ROOT) + "./repos/#{URI(@url).path}/#{name}"
+        URI(API_URL_ROOT) + "./repos/#{@group}/#{@project}/#{name}"
       end
     end
   end

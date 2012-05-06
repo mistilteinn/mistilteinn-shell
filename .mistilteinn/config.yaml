@@ -6,4 +6,5 @@ redmine:
   project: mistilteinn-shell
 
 github:
-  url: https://github.com/mistilteinn/mistilteinn-shell
+  group: mistilteinn
+  project: mistilteinn-shell
