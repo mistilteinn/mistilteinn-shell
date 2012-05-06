@@ -84,12 +84,8 @@ END
       end
 
       def issue_ticket(datafile, ticket_id)
-        File::open(datafile.path) do |f|
-          YAML.load_documents(f) do |yaml|
-            yaml.each do |key, value|
-              ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.#{key}", "\"#{value}\"")
-            end
-          end
+        YAML.load_file(datafile.path).each do |key,value|
+          ::Mistilteinn::Git.config("ticket.id/#{ticket_id}.#{key}", "\"#{value}\"")
         end
       end
 
