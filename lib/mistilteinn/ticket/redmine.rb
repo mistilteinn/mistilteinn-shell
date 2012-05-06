@@ -30,6 +30,28 @@ module Mistilteinn
                              }})
       end
 
+      def info(args)
+        return nil if args.length != 1
+        entry = HttpUtil.get_json(api("issues/#{args.first}"),
+                                  { :project_id => @config.project,
+                                    :key => @config.apikey,
+                                    :include => 'journals'})['issue']
+        journals =
+          entry['journals'].select{|journal| not journal['notes'].empty?}.map{|journal|
+            ::Mistilteinn::Ticket::Journal.new(journal['id'],
+                                               journal['created_on'],
+                                               journal['notes'],
+                                               journal['user']['name'])
+          }
+        ::Mistilteinn::Ticket::Entry.new(entry['id'],
+                                         entry['subject'],
+                                         entry['status']['name'],
+                                         entry['author']['name'],
+                                         entry['created_on'],
+                                         entry['description'],
+                                         journals)
+      end
+
       def check
         begin
           HttpUtil.get_json(api('users/current'),
