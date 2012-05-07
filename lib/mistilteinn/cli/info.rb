@@ -4,8 +4,10 @@ module Mistilteinn::Cli
     desc 'display information of specified ticket'
 
     def action
-      issue = its.info args
-      return if issue.nil?
+      id = args.first || $1 if ::Mistilteinn::Git::branch.match(/id\/(\d+)/)
+      return unless id
+
+      issue = its.info id
       body = <<-END
      ID: #{issue['id']}
 Subject: #{issue['name']}

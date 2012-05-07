@@ -30,9 +30,8 @@ module Mistilteinn
                              }})
       end
 
-      def info(args)
-        return nil if args.length != 1
-        entry = HttpUtil.get_json(api("issues/#{args.first}"),
+      def info(id)
+        entry = HttpUtil.get_json(api("issues/#{id}"),
                                   { :project_id => @config.project,
                                     :key => @config.apikey,
                                     :include => 'journals'})['issue']
