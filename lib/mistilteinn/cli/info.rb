@@ -13,7 +13,7 @@ Subject: #{issue['name']}
    Date: #{issue['date']}
       END
 
-      unless issue['body'].empty?
+      if issue['body'] and not issue['body'].empty?
         body << "\n"
         body << issue['body']
       end

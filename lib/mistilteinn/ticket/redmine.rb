@@ -37,7 +37,8 @@ module Mistilteinn
                                     :key => @config.apikey,
                                     :include => 'journals'})['issue']
         journals =
-          entry['journals'].select{|journal| not journal['notes'].empty?}.map{|journal|
+          entry['journals'].select{|journal| (not journal.empty?) and
+                                             (not journal['notes'].empty?)}.map{|journal|
             ::Mistilteinn::Ticket::Journal.new(journal['id'],
                                                journal['created_on'],
                                                journal['notes'],
