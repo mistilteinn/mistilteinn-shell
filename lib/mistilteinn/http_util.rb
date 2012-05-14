@@ -11,10 +11,10 @@ module Mistilteinn
     class HttpError < StandardError; end
 
     class << self
-      def get_json(url, params={})
+      def get_json(url, params={}, headers={})
         url = url.to_s + '?' + params.map{|key,value| "#{key}=#{value}" }.join("&")
         begin
-          open(url) do |io|
+          open(url, headers) do |io|
             JSON.parse(io.read)
           end
         rescue => e
@@ -32,6 +32,7 @@ module Mistilteinn
                           headers.merge("Content-Type" => "application/json"))
           case ret
           when Net::HTTPSuccess
+            ret
           else
             raise HttpError.new("#{ret} (#{url})")
           end
