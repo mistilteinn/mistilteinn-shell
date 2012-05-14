@@ -15,8 +15,15 @@ module Mistilteinn
       end
 
       def tickets
-        puts "Not supported yet :(" 
-        []
+        login
+
+        uri = URI.parse "#{@config.url}/rest/api/latest/search?jql=assignee=#{@config.username}&maxResults=10" 
+        Net::HTTP.start(uri.host, uri.port) do |http|
+          response = http.get(uri.request_uri, {'Cookie' => @cookie.map{|k,v| "#{k}=#{v}"}.join(';')})
+          JSON.parse(response.body)["issues"].map do |issue|
+            info(issue["key"])
+          end
+        end
       end
 
       def create(title)
@@ -54,6 +61,7 @@ module Mistilteinn
 
       private
       def login
+        return unless @cookie.empty?
         uri = URI.parse "#{@config.url}/rest/auth/latest/session" 
         Net::HTTP.start(uri.host, uri.port) do |http|
           header = {
