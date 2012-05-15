@@ -14,6 +14,8 @@ module Mistilteinn
         Mistilteinn::Ticket::AtsutaKatze
       when :gitconfig
         Mistilteinn::Ticket::GitConfig
+      when :jira
+        Mistilteinn::Ticket::Jira
       end
     end
     module_function :[]
