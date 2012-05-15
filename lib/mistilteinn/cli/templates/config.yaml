@@ -10,3 +10,8 @@ redmine:
 
 github:
   url: https://github.com/mistilteinn/mistilteinn-shell
+
+jira:
+  url: http://example.jira.com/
+  username: your_name
+  password: your_password 
