@@ -28,15 +28,21 @@ module Mistilteinn
 
         uri = URI.parse "#{@config.url}/rest/api/latest/issue/#{id}" 
         Net::HTTP.start(uri.host, uri.port) do |http|
-          response = http.get(uri.path, {'Cookie'=>cookie.map{|k,v| "#{k}=#{v}"}.join(';')})
+          response = http.get(uri.path, {'Cookie' => @cookie.map{|k,v| "#{k}=#{v}"}.join(';')})
           issue = JSON.parse response.body
 
-          journals = []
+          journals = issue["fields"]["comment"]["value"].map do |comment|
+            ::Mistilteinn::Ticket::Journal.new(0,
+                                               comment["created"],
+                                               comment["body"],
+                                               comment["author"]["displayName"])
+          end
+
           ::Mistilteinn::Ticket::Entry.new(id,
                                            issue["fields"]["summary"]["value"],
                                            issue["fields"]["status"]["value"]["name"],
                                            issue["fields"]["reporter"]["value"]["displayName"],
-                                           issue["created"]["value"],
+                                           issue["fields"]["created"]["value"],
                                            issue["fields"]["description"]["value"],
                                            journals)
         end
@@ -49,10 +55,12 @@ module Mistilteinn
       private
       def login
         uri = URI.parse "#{@config.url}/rest/auth/latest/session" 
-
         Net::HTTP.start(uri.host, uri.port) do |http|
-          header = { "Content-Type" => "application/json" }
-          body = "{'username' : '#{@config.username}', 'password' : '#{@config.password}'}" 
+          header = {
+            "user-agent" => "Ruby/#{RUBY_VERSION} MyHttpClient",
+            "Content-Type" => "application/json" 
+          }
+          body = "{\"username\" : \"#{@config.username}\", \"password\" : \"#{@config.password}\"}" 
           response = http.post(uri.path, body, header)
           response.get_fields('Set-Cookie').each{|str|
             k,v = str[0...str.index(';')].split('=')
